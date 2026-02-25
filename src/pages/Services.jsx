@@ -42,7 +42,7 @@ const PARTNER_ACTIONS = [
   { label: '⚙',            color: '#17a2b8', title: 'Settings'        },
   { label: '✎',            color: '#17a2b8', title: 'Edit'            },
   { label: 'Clone Service', color: '#0d9488', title: 'Clone Service'  },
-  { label: '⎘',            color: '#6c757d', title: 'Duplicate'       },
+  // { label: '⎘',            color: '#6c757d', title: 'Duplicate'       },
   { label: 'Custom Variables', color: '#0d9488', title: 'Custom Variables' },
 ];
 
