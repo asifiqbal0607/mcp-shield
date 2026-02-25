@@ -39,7 +39,7 @@ const svcRows = [
 // ─── Partner action buttons (matching screenshot) ─────────────────────────────
 
 const PARTNER_ACTIONS = [
-  { label: '⚙',            color: '#17a2b8', title: 'Settings'        },
+  { key: 'view',    icon: '👁',  title: 'View',         color: '#0891b2' },
   { label: '✎',            color: '#17a2b8', title: 'Edit'            },
   { label: 'Clone Service', color: '#0d9488', title: 'Clone Service'  },
   // { label: '⎘',            color: '#6c757d', title: 'Duplicate'       },
