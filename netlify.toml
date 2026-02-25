@@ -1,7 +1,7 @@
 [build]
   base    = "mcp-shield"
-  command = "npm install && npm run build"
   publish = "dist"
+  command = "npm run build"
 
 [[redirects]]
   from = "/*"
