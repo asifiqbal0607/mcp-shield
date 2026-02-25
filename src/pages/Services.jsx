@@ -21,6 +21,16 @@ const API_CALL_DATA = [
 
 const BAR_COLORS = [BLUE, GREEN, VIOLET, ROSE, AMBER, '#06b6d4', '#f97316'];
 
+const ADMIN_ACTIONS = [
+  { label: 'Solution',       color: '#6c757d' },
+  { label: 'Map Service',    color: '#17a2b8' },
+  { label: 'Dashboard',      color: '#6c757d' },
+  { label: 'Edit',           color: '#0d6efd' },
+  { label: 'IP',             color: '#6c757d' },
+  { label: 'Clone Service',  color: '#6c757d' },
+  { label: 'Update Summary', color: '#6c757d' },
+];
+
 function uptimeColor(uptime) {
   return parseFloat(uptime) >= 99 ? GREEN : AMBER;
 }
@@ -34,9 +44,63 @@ function statusColor(status) {
   return status === 'active' ? GREEN : status === 'warning' ? AMBER : ROSE;
 }
 
+// ─── Actions Dropdown (admin only) ───────────────────────────────────────────
+
+function ActionsDropdown() {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <div style={{ position: 'relative', display: 'inline-block' }}>
+      <button
+        onClick={() => setOpen(o => !o)}
+        style={{
+          padding: '3px 10px', borderRadius: 6, fontSize: 15, fontWeight: 700,
+          border: '1px solid #cbd5e1', cursor: 'pointer',
+          background: open ? '#f1f5f9' : '#fff',
+          color: '#475569', letterSpacing: 2, lineHeight: 1,
+        }}
+        title="Actions"
+      >
+        ···
+      </button>
+      {open && (
+        <>
+          {/* Click outside overlay */}
+          <div style={{ position: 'fixed', inset: 0, zIndex: 998 }} onClick={() => setOpen(false)} />
+          <div style={{
+            position: 'absolute', right: 0, top: 'calc(100% + 4px)', zIndex: 999,
+            background: '#fff', borderRadius: 8, minWidth: 160,
+            border: '1px solid #e2e8f0',
+            boxShadow: '0 4px 16px rgba(0,0,0,0.10)',
+            overflow: 'hidden',
+          }}>
+            {ADMIN_ACTIONS.map((a, i) => (
+              <button
+                key={a.label}
+                onClick={() => setOpen(false)}
+                style={{
+                  display: 'block', width: '100%', textAlign: 'left',
+                  padding: '8px 14px', fontSize: 12, fontWeight: 500,
+                  border: 'none', borderTop: i > 0 ? '1px solid #f1f5f9' : 'none',
+                  cursor: 'pointer', background: 'transparent', color: a.color,
+                }}
+                onMouseEnter={e => e.currentTarget.style.background = '#f8fafc'}
+                onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+              >
+                {a.label}
+              </button>
+            ))}
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
 export default function PageServices({ role = 'admin' }) {
   const [tab, setTab] = useState('active');
   const isPartner = role === 'partner';
+  const isAdmin   = role === 'admin';
 
   const activeServices   = svcRows.filter((r) => r.status === 'active');
   const inactiveServices = svcRows.filter((r) => r.status !== 'active');
@@ -48,9 +112,88 @@ export default function PageServices({ role = 'admin' }) {
     { label: 'Inactive',       value: inactiveServices.length,  color: '#f59e0b' },
   ];
 
+  // Columns — admin sees all, partner sees restricted set
+  const ALL_COLUMNS = [
+    { key: 'sr',                 label: 'Sr.',                  admin: true,  partner: true  },
+    { key: 'name',               label: 'Name',                 admin: true,  partner: true  },
+    { key: 'serviceId',          label: 'Service ID',           admin: true,  partner: true  },
+    { key: 'status',             label: 'Status',               admin: true,  partner: true  },
+    { key: 'client',             label: 'Client',               admin: true,  partner: false },
+    { key: 'vsBrand',            label: 'VS Brand',             admin: true,  partner: false },
+    { key: 'serviceType',        label: 'Service Type',         admin: true,  partner: true  },
+    { key: 'mno',                label: 'MNO',                  admin: true,  partner: false },
+    { key: 'carrierGradeNat',    label: 'Carrier Grade NAT',    admin: true,  partner: false },
+    { key: 'shieldMode',         label: 'ShieldMode',           admin: true,  partner: true  },
+    { key: 'headerEnrichedFlow', label: 'Header Enriched Flow', admin: true,  partner: true  },
+    { key: 'hePaymentFlow',      label: 'HE Payment Flow',      admin: true,  partner: false },
+    { key: 'wifiPaymentFlow',    label: 'WiFi Payment Flow',    admin: true,  partner: false },
+    { key: 'serviceCreated',     label: 'Service Created',      admin: true,  partner: false },
+    { key: 'lastUpdate',         label: 'Last Update',          admin: true,  partner: true  },
+    { key: 'actions',            label: 'Actions',              admin: true,  partner: true  },
+  ];
+
+  const visibleCols = ALL_COLUMNS.filter(c => isAdmin ? c.admin : c.partner);
+
+  function renderCell(col, row, idx) {
+    switch (col.key) {
+      case 'sr':
+        return <span style={{ color: '#94a3b8' }}>{idx + 1}</span>;
+      case 'name':
+        return <span style={{ fontWeight: 700, color: BLUE }}>{row.name}</span>;
+      case 'serviceId':
+        return <span style={{ fontFamily: 'monospace', fontSize: 11, color: '#64748b' }}>{row.id}</span>;
+      case 'status':
+        return (
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
+            <span style={{ width: 8, height: 8, borderRadius: '50%', background: statusColor(row.status), display: 'inline-block' }} />
+            <span style={{ fontWeight: 600, textTransform: 'capitalize', color: statusColor(row.status) }}>{row.status}</span>
+          </span>
+        );
+      case 'client':
+        return row.client || '--';
+      case 'vsBrand':
+        return row.vsBrand || '--';
+      case 'serviceType':
+        return <Badge color={VIOLET}>{row.type}</Badge>;
+      case 'mno':
+        return row.mno || '--';
+      case 'carrierGradeNat':
+        return row.carrierGradeNat || '--';
+      case 'shieldMode':
+        return row.shieldMode
+          ? <span style={{ padding: '2px 10px', borderRadius: 20, fontSize: 11, fontWeight: 600, background: '#0dcaf0', color: '#fff' }}>{row.shieldMode}</span>
+          : '--';
+      case 'headerEnrichedFlow':
+        return row.headerEnrichedFlow || '--';
+      case 'hePaymentFlow':
+        return row.hePaymentFlow || '--';
+      case 'wifiPaymentFlow':
+        return row.wifiPaymentFlow || '--';
+      case 'serviceCreated':
+        return row.serviceCreated
+          ? <span style={{ padding: '2px 8px', borderRadius: 5, fontSize: 11, background: '#e0f2fe', color: '#0369a1', fontFamily: 'monospace' }}>{row.serviceCreated}</span>
+          : '--';
+      case 'lastUpdate':
+        return row.lastUpdate
+          ? <span style={{ padding: '2px 8px', borderRadius: 5, fontSize: 11, background: '#e0f2fe', color: '#0369a1', fontFamily: 'monospace' }}>{row.lastUpdate}</span>
+          : '--';
+      case 'actions':
+        return isAdmin
+          ? <ActionsDropdown />
+          : (
+            <div style={{ display: 'flex', gap: 4 }}>
+              <button className="btn-secondary" style={{ fontSize: 11 }}>Dashboard</button>
+              <button className="btn-secondary" style={{ fontSize: 11 }}>Map Service</button>
+            </div>
+          );
+      default:
+        return '--';
+    }
+  }
+
   return (
     <div>
-      {/* Summary stats */}
+      {/* Summary stats — unchanged */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 14, marginBottom: 20 }}>
         {SUMMARY_STATS.map(({ label, value, color }) => (
           <Card key={label} style={{ textAlign: 'center', borderTop: `4px solid ${color}` }}>
@@ -60,7 +203,7 @@ export default function PageServices({ role = 'admin' }) {
         ))}
       </div>
 
-      {/* Charts */}
+      {/* Charts — unchanged */}
       <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 14, marginBottom: 20 }}>
         <Card>
           <SectionTitle>Uptime Trend (14 days)</SectionTitle>
@@ -89,7 +232,7 @@ export default function PageServices({ role = 'admin' }) {
         </Card>
       </div>
 
-      {/* Service registry */}
+      {/* Service Registry — updated columns + dropdown */}
       <Card>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
@@ -105,7 +248,7 @@ export default function PageServices({ role = 'admin' }) {
             )}
           </div>
 
-          {/* Active / Inactive tab bar */}
+          {/* Active / Inactive tab bar — unchanged */}
           <div style={{ display: 'flex', gap: 0 }}>
             {[['active', GREEN, '22c55e', 'dcfce7', '16a34a'], ['inactive', AMBER, 'f59e0b', 'fef3c7', 'd97706']].map(([key, borderColor, dotHex, bgHex, textHex]) => {
               const isOn = tab === key;
@@ -133,43 +276,38 @@ export default function PageServices({ role = 'admin' }) {
           </div>
         </div>
 
-        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
-          <thead>
-            <tr style={{ borderBottom: '2px solid #f1f5f9' }}>
-              {['ID', 'Service', 'Type', 'Region', 'Uptime', 'Latency', 'Calls', 'Status', 'Action'].map((h) => (
-                <th key={h} style={{ textAlign: 'left', padding: 10, fontSize: 11, color: SLATE }}>{h}</th>
+        <div style={{ overflowX: 'auto' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+            <thead>
+              <tr style={{ borderBottom: '2px solid #f1f5f9' }}>
+                {visibleCols.map(col => (
+                  <th key={col.key} style={{ textAlign: 'left', padding: 10, fontSize: 11, color: SLATE, whiteSpace: 'nowrap' }}>
+                    {col.label}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {displayed.length === 0 ? (
+                <tr>
+                  <td colSpan={visibleCols.length} style={{ padding: 30, textAlign: 'center', color: SLATE, fontSize: 13 }}>
+                    No {tab} services found.
+                  </td>
+                </tr>
+              ) : displayed.map((row, idx) => (
+                <tr key={idx} style={{ borderBottom: '1px solid #f8fafc' }}
+                  onMouseEnter={e => e.currentTarget.style.background = '#f8fafc'}
+                  onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
+                  {visibleCols.map(col => (
+                    <td key={col.key} style={{ padding: 10, verticalAlign: 'middle', whiteSpace: 'nowrap' }}>
+                      {renderCell(col, row, idx)}
+                    </td>
+                  ))}
+                </tr>
               ))}
-            </tr>
-          </thead>
-          <tbody>
-            {displayed.length === 0 ? (
-              <tr>
-                <td colSpan={9} style={{ padding: 30, textAlign: 'center', color: SLATE, fontSize: 13 }}>
-                  No {tab} services found.
-                </td>
-              </tr>
-            ) : displayed.map((r, i) => (
-              <tr key={i} style={{ borderBottom: '1px solid #f8fafc' }}
-                onMouseEnter={(e) => (e.currentTarget.style.background = '#f8fafc')}
-                onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}>
-                <td style={{ padding: 10, fontWeight: 700, color: BLUE }}>{r.id}</td>
-                <td style={{ padding: 10, fontWeight: 700 }}>{r.name}</td>
-                <td style={{ padding: 10 }}><Badge color={VIOLET}>{r.type}</Badge></td>
-                <td style={{ padding: 10 }}>{r.region}</td>
-                <td style={{ padding: 10, fontWeight: 700, color: uptimeColor(r.uptime) }}>{r.uptime}</td>
-                <td style={{ padding: 10, fontWeight: 700, color: latencyColor(r.latency) }}>{r.latency}</td>
-                <td style={{ padding: 10, fontFamily: 'monospace' }}>{r.calls}</td>
-                <td style={{ padding: 10 }}>
-                  <span style={{ width: 8, height: 8, borderRadius: '50%', background: statusColor(r.status), display: 'inline-block', marginRight: 6 }} />
-                  <span style={{ fontWeight: 600, textTransform: 'capitalize' }}>{r.status}</span>
-                </td>
-                <td style={{ padding: 10 }}>
-                  <button className="btn-secondary">Config</button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
       </Card>
     </div>
   );
