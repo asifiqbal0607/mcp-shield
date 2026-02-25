@@ -8,8 +8,8 @@ import {
   PolarRadiusAxis,
   Tooltip,
 } from "recharts";
-import { SLATE } from "../../constants/colors";
-import { blockReasons, blockLegend } from "../../data/charts";
+import { SLATE } from "../constants/colors";
+import { blockReasons, blockLegend } from "../data/charts";
 
 // ─── Dark tooltip ─────────────────────────────────────────────────────────────
 function RadarTooltip({ active, payload, label }) {
