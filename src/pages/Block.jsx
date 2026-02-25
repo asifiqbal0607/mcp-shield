@@ -1,276 +1,339 @@
 import { useState } from "react";
 import {
   ResponsiveContainer,
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
+  RadarChart,
+  Radar,
+  PolarGrid,
+  PolarAngleAxis,
+  PolarRadiusAxis,
   Tooltip,
-  Cell,
 } from "recharts";
+import { SLATE } from "../../constants/colors";
+import { blockReasons, blockLegend } from "../../data/charts";
 
-import {
-  Card,
-  SectionTitle,
-  Badge,
-  ChartTooltip,
-  TransactionsModal,
-} from "../components/ui";
-import { BlockRadarChart } from "../components/charts";
-import { ROSE, AMBER, GREEN, SLATE, BLUE } from "../constants/colors";
-import { blkRows } from "../data/tables";
+// ─── Dark tooltip ─────────────────────────────────────────────────────────────
+function RadarTooltip({ active, payload, label }) {
+  if (!active || !payload?.length) return null;
+  return (
+    <div
+      style={{
+        background: "#1a1a2e",
+        borderRadius: 10,
+        padding: "10px 14px",
+        boxShadow: "0 8px 24px rgba(0,0,0,.25)",
+        minWidth: 190,
+      }}
+    >
+      <div
+        style={{
+          fontSize: 11,
+          fontWeight: 800,
+          color: "#fff",
+          marginBottom: 8,
+          borderBottom: "1px solid rgba(255,255,255,.1)",
+          paddingBottom: 6,
+        }}
+      >
+        {label}
+      </div>
+      {payload.map((p, i) => (
+        <div
+          key={i}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: 16,
+            marginBottom: 3,
+          }}
+        >
+          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+            <div
+              style={{
+                width: 8,
+                height: 8,
+                borderRadius: "50%",
+                background: p.color,
+                flexShrink: 0,
+              }}
+            />
+            <span style={{ fontSize: 10, color: "rgba(255,255,255,.65)" }}>
+              {p.name}
+            </span>
+          </div>
+          <span
+            style={{
+              fontSize: 10,
+              fontWeight: 700,
+              color: "#fff",
+              fontFamily: "monospace",
+            }}
+          >
+            {Number(p.value).toLocaleString()}
+          </span>
+        </div>
+      ))}
+    </div>
+  );
+}
 
-const SEVERITY_COLORS = {
-  Critical: ROSE,
-  High: AMBER,
-  Medium: BLUE,
-  Low: GREEN,
-};
+// ─── Pill day label — clickable if onDayClick provided ───────────────────────
+function DayTick({ x, y, payload, onDayClick }) {
+  return (
+    <g
+      transform={`translate(${x},${y})`}
+      onClick={
+        onDayClick
+          ? (e) => {
+              e.stopPropagation();
+              onDayClick(payload.value);
+            }
+          : undefined
+      }
+      style={{ cursor: onDayClick ? "pointer" : "default" }}
+    >
+      <rect
+        x={-22}
+        y={-11}
+        width={44}
+        height={22}
+        rx={11}
+        fill="#eff6ff"
+        stroke="none"
+        strokeWidth={0}
+      />
+      <text
+        x={0}
+        y={0}
+        textAnchor="middle"
+        dominantBaseline="central"
+        fill="#1d4ed8"
+        fontSize={11}
+        fontWeight={700}
+      >
+        {payload.value}
+      </text>
+    </g>
+  );
+}
 
-const SUMMARY_STATS = [
-  { label: "Total Blocked", value: "15,39,810", color: ROSE },
-  { label: "Critical Events", value: "2,53,660", color: ROSE },
-  { label: "High Risk", value: "6,15,350", color: AMBER },
-  { label: "Auto-Resolved", value: "8,24,110", color: GREEN },
-];
+/**
+ * BlockRadarChart
+ * @param {number}   height       Chart height in px (default 300)
+ * @param {boolean}  showBadge    Show "7-day view" badge (default true)
+ * @param {number}   seriesLimit  How many series to show (default 5)
+ * @param {function} onChartClick Called only when the radar graph area is clicked
+ */
+export default function BlockRadarChart({
+  height = 300,
+  showBadge = true,
+  seriesLimit = 5,
+  onChartClick,
+  onDayClick,
+}) {
+  const [hidden, setHidden] = useState({});
+  const [hovered, setHovered] = useState(null);
 
-export default function PageBlocking() {
-  const [modal, setModal] = useState(null);
-  const open = (title) => setModal(title);
-  const close = () => setModal(null);
+  const toggle = (key) => setHidden((h) => ({ ...h, [key]: !h[key] }));
+  const series = blockLegend.slice(0, seriesLimit);
+
+  // Sum each series across all days for the hover tooltip
+  const totals = series.reduce((acc, b) => {
+    acc[b.key] = blockReasons.reduce((sum, day) => sum + (day[b.key] || 0), 0);
+    return acc;
+  }, {});
 
   return (
-    <div>
-      {/* Summary stats */}
+    <div
+      style={{
+        background: "linear-gradient(145deg,#fafcff,#f0f4ff)",
+        borderRadius: 12,
+        padding: "16px 16px 12px",
+      }}
+    >
+      {/* Header */}
       <div
         style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(4,1fr)",
-          gap: 14,
-          marginBottom: 18,
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "flex-start",
+          marginBottom: 12,
         }}
       >
-        {SUMMARY_STATS.map((s) => (
-          <Card
-            key={s.label}
-            onClick={() => open(`${s.label} — Transactions`)}
+        <div>
+          <div style={{ fontSize: 14, fontWeight: 800, color: "#1a1a2e" }}>
+            Weekly Block Pattern
+          </div>
+          <div style={{ fontSize: 11, color: SLATE, marginTop: 2 }}>
+            Threat distribution by day of week
+          </div>
+        </div>
+        {showBadge && (
+          <div
             style={{
-              textAlign: "center",
-              borderTop: `3px solid ${s.color}`,
-              cursor: "pointer",
-              transition: "box-shadow .15s",
+              background: "#1d4ed8",
+              color: "#fff",
+              borderRadius: 10,
+              padding: "5px 12px",
+              fontSize: 11,
+              fontWeight: 700,
+              flexShrink: 0,
             }}
-            onMouseEnter={(e) =>
-              (e.currentTarget.style.boxShadow = "0 4px 16px rgba(0,0,0,.1)")
-            }
-            onMouseLeave={(e) => (e.currentTarget.style.boxShadow = "")}
           >
-            <div
+            7-day view
+          </div>
+        )}
+      </div>
+
+      {/* ── Radar — no wrapper click, button below triggers modal ── */}
+      <div style={{ borderRadius: 8, overflow: "hidden" }}>
+        <ResponsiveContainer width="100%" height={height}>
+          <RadarChart
+            data={blockReasons}
+            margin={{ top: 16, right: 50, bottom: 16, left: 50 }}
+          >
+            <PolarGrid
+              gridType="polygon"
+              stroke="#dde5f5"
+              strokeWidth={1}
+              strokeDasharray="4 3"
+            />
+            <PolarAngleAxis
+              dataKey="subject"
+              tick={<DayTick onDayClick={onDayClick} />}
+            />
+            <PolarRadiusAxis
+              angle={90}
+              domain={[0, 5500]}
+              tick={{ fontSize: 9, fill: "#94a3b8" }}
+              axisLine={false}
+              tickCount={4}
+            />
+            <Tooltip content={<RadarTooltip />} />
+            {series.map(
+              (b) =>
+                !hidden[b.key] && (
+                  <Radar
+                    key={b.key}
+                    name={b.key}
+                    dataKey={b.key}
+                    stroke={b.color}
+                    strokeWidth={2}
+                    fill={b.color}
+                    fillOpacity={0.18}
+                    dot={{ fill: b.color, r: 3, strokeWidth: 0 }}
+                    activeDot={{ r: 5, strokeWidth: 2, stroke: "#fff" }}
+                  />
+                ),
+            )}
+          </RadarChart>
+        </ResponsiveContainer>
+      </div>
+
+      {/* ── Legend — NOT inside the click zone ── */}
+      <div
+        style={{
+          display: "flex",
+          flexWrap: "wrap",
+          gap: 8,
+          justifyContent: "center",
+          marginTop: 4,
+          paddingTop: 12,
+          borderTop: "1px solid #e8ecf3",
+        }}
+      >
+        {series.map((b) => (
+          <div key={b.key} style={{ position: "relative" }}>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                toggle(b.key);
+              }}
+              onMouseEnter={() => setHovered(b.key)}
+              onMouseLeave={() => setHovered(null)}
               style={{
-                fontSize: 22,
-                fontWeight: 900,
-                fontFamily: "Georgia,serif",
-                color: s.color,
+                display: "flex",
+                alignItems: "center",
+                gap: 6,
+                padding: "4px 10px",
+                borderRadius: 20,
+                border: "none",
+                cursor: "pointer",
+                background: hidden[b.key] ? "#f1f5f9" : `${b.color}18`,
+                opacity: hidden[b.key] ? 0.45 : 1,
+                transition: "all .15s",
               }}
             >
-              {s.value}
-            </div>
-            <div
-              style={{
-                fontSize: 11,
-                color: SLATE,
-                marginTop: 4,
-                fontWeight: 600,
-              }}
-            >
-              {s.label}
-            </div>
-            <div style={{ fontSize: 9, color: "#94a3b8", marginTop: 4 }}>
-              View Transactions ↗
-            </div>
-          </Card>
+              <div
+                style={{
+                  width: 8,
+                  height: 8,
+                  borderRadius: "50%",
+                  background: hidden[b.key] ? "#cbd5e1" : b.color,
+                  boxShadow: hidden[b.key] ? "none" : `0 0 4px ${b.color}88`,
+                }}
+              />
+              <span
+                style={{
+                  fontSize: 10,
+                  fontWeight: 600,
+                  color: hidden[b.key] ? SLATE : "#334155",
+                }}
+              >
+                {b.key}
+              </span>
+            </button>
+
+            {/* Hover count tooltip */}
+            {hovered === b.key && (
+              <div
+                style={{
+                  position: "absolute",
+                  bottom: "calc(100% + 6px)",
+                  left: "50%",
+                  transform: "translateX(-50%)",
+                  background: "#1a1a2e",
+                  color: "#fff",
+                  borderRadius: 8,
+                  padding: "6px 12px",
+                  fontSize: 11,
+                  fontWeight: 700,
+                  whiteSpace: "nowrap",
+                  boxShadow: "0 4px 12px rgba(0,0,0,.2)",
+                  zIndex: 10,
+                  pointerEvents: "none",
+                }}
+              >
+                <div
+                  style={{
+                    fontSize: 9,
+                    color: "rgba(255,255,255,.55)",
+                    marginBottom: 2,
+                  }}
+                >
+                  7-day total
+                </div>
+                <div style={{ color: b.color }}>
+                  {totals[b.key]?.toLocaleString() ?? "--"}
+                </div>
+                <div
+                  style={{
+                    position: "absolute",
+                    top: "100%",
+                    left: "50%",
+                    transform: "translateX(-50%)",
+                    width: 0,
+                    height: 0,
+                    borderLeft: "5px solid transparent",
+                    borderRight: "5px solid transparent",
+                    borderTop: "5px solid #1a1a2e",
+                  }}
+                />
+              </div>
+            )}
+          </div>
         ))}
       </div>
-
-      {/* Charts */}
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "1.3fr 1fr",
-          gap: 14,
-          marginBottom: 18,
-        }}
-      >
-        <Card>
-          <BlockRadarChart
-            height={300}
-            showBadge={true}
-            onDayClick={(day) => open(`${day} Block Pattern — Transactions`)}
-          />
-        </Card>
-
-        <Card>
-          <SectionTitle>Volume by Reason</SectionTitle>
-          <ResponsiveContainer width="100%" height={260}>
-            <BarChart
-              data={blkRows}
-              layout="vertical"
-              margin={{ top: 0, right: 10, left: 10, bottom: 0 }}
-            >
-              <XAxis
-                type="number"
-                tick={{ fontSize: 9, fill: "#cbd5e1" }}
-                axisLine={false}
-                tickLine={false}
-              />
-              <YAxis
-                type="category"
-                dataKey="reason"
-                tick={{ fontSize: 9, fill: "#64748b" }}
-                axisLine={false}
-                tickLine={false}
-                width={130}
-                tickFormatter={(v) =>
-                  v.length > 16 ? v.slice(0, 16) + "…" : v
-                }
-              />
-              <Tooltip content={<ChartTooltip />} />
-              <Bar
-                dataKey="pct"
-                name="Share %"
-                radius={[0, 4, 4, 0]}
-                onClick={(data) => open(`${data.reason} — Transactions`)}
-                style={{ cursor: "pointer" }}
-              >
-                {blkRows.map((d, i) => (
-                  <Cell key={i} fill={d.color} />
-                ))}
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
-        </Card>
-      </div>
-
-      {/* Full breakdown table */}
-      <Card>
-        <SectionTitle>Full Breakdown</SectionTitle>
-        <table
-          style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}
-        >
-          <thead>
-            <tr style={{ borderBottom: "2px solid #f1f5f9" }}>
-              {[
-                "Block Reason",
-                "Count",
-                "Share",
-                "7d Trend",
-                "Severity",
-                "Progress",
-              ].map((h) => (
-                <th
-                  key={h}
-                  style={{
-                    textAlign: "left",
-                    padding: "8px 12px",
-                    fontSize: 10,
-                    fontWeight: 700,
-                    color: SLATE,
-                    textTransform: "uppercase",
-                    letterSpacing: ".8px",
-                  }}
-                >
-                  {h}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {blkRows.map((r, i) => (
-              <tr
-                key={i}
-                style={{ borderBottom: "1px solid #f8fafc", cursor: "pointer" }}
-                onClick={() => open(`${r.reason} — Transactions`)}
-                onMouseEnter={(e) =>
-                  (e.currentTarget.style.background = "#f8fafc")
-                }
-                onMouseLeave={(e) =>
-                  (e.currentTarget.style.background = "transparent")
-                }
-              >
-                <td style={{ padding: "11px 12px" }}>
-                  <div
-                    style={{ display: "flex", alignItems: "center", gap: 9 }}
-                  >
-                    <div
-                      style={{
-                        width: 11,
-                        height: 11,
-                        borderRadius: 3,
-                        background: r.color,
-                        flexShrink: 0,
-                      }}
-                    />
-                    <span style={{ fontWeight: 700, color: "#1a1a2e" }}>
-                      {r.reason}
-                    </span>
-                  </div>
-                </td>
-                <td
-                  style={{
-                    padding: "11px 12px",
-                    fontFamily: "monospace",
-                    fontWeight: 700,
-                  }}
-                >
-                  {r.count}
-                </td>
-                <td
-                  style={{
-                    padding: "11px 12px",
-                    fontWeight: 700,
-                    color: r.color,
-                  }}
-                >
-                  {r.pct}%
-                </td>
-                <td
-                  style={{
-                    padding: "11px 12px",
-                    fontWeight: 700,
-                    color: r.trend.startsWith("+") ? ROSE : GREEN,
-                  }}
-                >
-                  {r.trend}
-                </td>
-                <td style={{ padding: "11px 12px" }}>
-                  <Badge color={SEVERITY_COLORS[r.sev]}>{r.sev}</Badge>
-                </td>
-                <td style={{ padding: "11px 12px", width: 140 }}>
-                  <div
-                    style={{
-                      height: 6,
-                      background: "#f1f5f9",
-                      borderRadius: 3,
-                    }}
-                  >
-                    <div
-                      style={{
-                        height: "100%",
-                        width: `${r.pct * 3.5}%`,
-                        maxWidth: "100%",
-                        background: r.color,
-                        borderRadius: 3,
-                      }}
-                    />
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </Card>
-      {/* Transactions modal */}
-      {modal && <TransactionsModal title={modal} onClose={close} />}
     </div>
   );
 }
