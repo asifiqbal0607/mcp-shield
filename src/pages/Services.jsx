@@ -20,29 +20,28 @@ const API_CALL_DATA = [
 
 const BAR_COLORS = [BLUE, GREEN, VIOLET, ROSE, AMBER, '#06b6d4', '#f97316'];
 
-// ─── Dummy service rows matching screenshot ───────────────────────────────────
+// ─── Dummy service rows ───────────────────────────────────────────────────────
 
 const svcRows = [
-  { id: 1,  name: 'True Digital Group Co.,Ltd (4237) | Horo Sap4 - 4237424 - True', serviceId: '-36KlpABQGMxF54qLUGn', status: 'active',   client: 'True Digital', vsBrand: '--', type: '--',     mno: '--', carrierGradeNat: '--', shieldMode: '--',       headerEnrichedFlow: '--', hePaymentFlow: '--', wifiPaymentFlow: '--', serviceCreated: '2024-01-10', lastUpdate: '2024-06-01' },
-  { id: 2,  name: 'True Digital Group Co.,Ltd (4239) | Wan Duang dee 3 - 4239469 - True', serviceId: '-37bZ5MBQGMxF54qXIB_', status: 'active',   client: 'True Digital', vsBrand: '--', type: '--',     mno: '--', carrierGradeNat: '--', shieldMode: 'Standard', headerEnrichedFlow: '--', hePaymentFlow: '--', wifiPaymentFlow: '--', serviceCreated: '2024-01-12', lastUpdate: '2024-06-03' },
-  { id: 3,  name: 'True Digital Group Co.,Ltd (4238) | Hora Duange4 - 4238572 - True', serviceId: '-6gEeJcBP_A8TV-HbUzE', status: 'active',   client: 'True Digital', vsBrand: '--', type: '--',     mno: '--', carrierGradeNat: '--', shieldMode: 'Standard', headerEnrichedFlow: '--', hePaymentFlow: '--', wifiPaymentFlow: '--', serviceCreated: '2024-01-15', lastUpdate: '2024-06-05' },
-  { id: 4,  name: 'gvi services | anus-sub-acc',                                          serviceId: '-8u4q5cB1fchDeWJNjg3', status: 'active',   client: 'GVI',          vsBrand: '--', type: '--',     mno: '--', carrierGradeNat: '--', shieldMode: 'Standard', headerEnrichedFlow: '--', hePaymentFlow: '--', wifiPaymentFlow: '--', serviceCreated: '2024-02-01', lastUpdate: '2024-06-10' },
-  { id: 5,  name: 'True Digital Group Co.,Ltd (4237) | Horo Sap - 4237421 - True',       serviceId: '-H6llpABQGMxF54qjEGX', status: 'active',   client: 'True Digital', vsBrand: '--', type: '--',     mno: '--', carrierGradeNat: '--', shieldMode: '--',       headerEnrichedFlow: '--', hePaymentFlow: '--', wifiPaymentFlow: '--', serviceCreated: '2024-02-10', lastUpdate: '2024-06-12' },
-  { id: 6,  name: 'Teleinfotech | Duang Den - 4218043 - True',                            serviceId: '-H6kiZEBQGMxF54qRUQX', status: 'active',   client: 'Teleinfotech', vsBrand: '--', type: '--',     mno: '--', carrierGradeNat: '--', shieldMode: 'Standard', headerEnrichedFlow: '--', hePaymentFlow: '--', wifiPaymentFlow: '--', serviceCreated: '2024-03-01', lastUpdate: '2024-06-15' },
-  { id: 7,  name: 'True Digital Group Co.,Ltd (4239) | Health care 2 - 4239462 - True',  serviceId: '-H7RZ5MBQGMxF54q0IAp', status: 'active',   client: 'True Digital', vsBrand: '--', type: '--',     mno: '--', carrierGradeNat: '--', shieldMode: 'Standard', headerEnrichedFlow: '--', hePaymentFlow: '--', wifiPaymentFlow: '--', serviceCreated: '2024-03-05', lastUpdate: '2024-06-18' },
-  { id: 8,  name: 'True Digital Group Co.,Ltd (4238) | XR Academy - 4238069 - True',     serviceId: '-Mp2d5AB-W5fcuufUc83', status: 'active',   client: 'True Digital', vsBrand: '--', type: '--',     mno: '--', carrierGradeNat: '--', shieldMode: 'Standard', headerEnrichedFlow: '--', hePaymentFlow: '--', wifiPaymentFlow: '--', serviceCreated: '2024-03-10', lastUpdate: '2024-06-20' },
-  { id: 9,  name: 'True Digital Group Co.,Ltd (4239) | Horo Lucky Dee9 - 4239355 - True',serviceId: '-Muv_ZQB-W5fcuufnkmx', status: 'active',   client: 'True Digital', vsBrand: '--', type: '--',     mno: '--', carrierGradeNat: '--', shieldMode: 'Standard', headerEnrichedFlow: '--', hePaymentFlow: '--', wifiPaymentFlow: '--', serviceCreated: '2024-03-15', lastUpdate: '2024-06-22' },
-  { id: 10, name: 'True Digital Group Co.,Ltd (4237) | Horo Sap2 - 4237422 - True',      serviceId: '-X6JlpABQGMxF54qHkFO', status: 'active',   client: 'True Digital', vsBrand: '--', type: '--',     mno: '--', carrierGradeNat: '--', shieldMode: '--',       headerEnrichedFlow: '--', hePaymentFlow: '--', wifiPaymentFlow: '--', serviceCreated: '2024-04-01', lastUpdate: '2024-06-25' },
-  { id: 11, name: 'iPay Service',                                                         serviceId: 'qcmk0vBzyQ83DjMqcw',   status: 'inactive', client: 'TPay',          vsBrand: '--', type: 'API',    mno: '--', carrierGradeNat: '--', shieldMode: 'Standout', headerEnrichedFlow: '--', hePaymentFlow: '--', wifiPaymentFlow: '--', serviceCreated: '2024-05-01', lastUpdate: '2024-07-01' },
+  { id: 1,  name: 'True Digital Group Co.,Ltd (4237) | Horo Sap4 - 4237424 - True',      serviceId: '-36KlpABQGMxF54qLUGn',  status: 'active',   client: 'True Digital', vsBrand: '--', type: '--',  mno: '--', carrierGradeNat: '--', shieldMode: '--',       headerEnrichedFlow: '--', hePaymentFlow: '--', wifiPaymentFlow: '--', serviceCreated: '2024-01-10', lastUpdate: '2024-06-01' },
+  { id: 2,  name: 'True Digital Group Co.,Ltd (4239) | Wan Duang dee 3 - 4239469 - True', serviceId: '-37bZ5MBQGMxF54qXIB_',  status: 'active',   client: 'True Digital', vsBrand: '--', type: '--',  mno: '--', carrierGradeNat: '--', shieldMode: 'Standard', headerEnrichedFlow: '--', hePaymentFlow: '--', wifiPaymentFlow: '--', serviceCreated: '2024-01-12', lastUpdate: '2024-06-03' },
+  { id: 3,  name: 'True Digital Group Co.,Ltd (4238) | Hora Duange4 - 4238572 - True',    serviceId: '-6gEeJcBP_A8TV-HbUzE',  status: 'active',   client: 'True Digital', vsBrand: '--', type: '--',  mno: '--', carrierGradeNat: '--', shieldMode: 'Standard', headerEnrichedFlow: '--', hePaymentFlow: '--', wifiPaymentFlow: '--', serviceCreated: '2024-01-15', lastUpdate: '2024-06-05' },
+  { id: 4,  name: 'gvi services | anus-sub-acc',                                           serviceId: '-8u4q5cB1fchDeWJNjg3',  status: 'active',   client: 'GVI',          vsBrand: '--', type: '--',  mno: '--', carrierGradeNat: '--', shieldMode: 'Standard', headerEnrichedFlow: '--', hePaymentFlow: '--', wifiPaymentFlow: '--', serviceCreated: '2024-02-01', lastUpdate: '2024-06-10' },
+  { id: 5,  name: 'True Digital Group Co.,Ltd (4237) | Horo Sap - 4237421 - True',        serviceId: '-H6llpABQGMxF54qjEGX',  status: 'active',   client: 'True Digital', vsBrand: '--', type: '--',  mno: '--', carrierGradeNat: '--', shieldMode: '--',       headerEnrichedFlow: '--', hePaymentFlow: '--', wifiPaymentFlow: '--', serviceCreated: '2024-02-10', lastUpdate: '2024-06-12' },
+  { id: 6,  name: 'Teleinfotech | Duang Den - 4218043 - True',                             serviceId: '-H6kiZEBQGMxF54qRUQX',  status: 'active',   client: 'Teleinfotech', vsBrand: '--', type: '--',  mno: '--', carrierGradeNat: '--', shieldMode: 'Standard', headerEnrichedFlow: '--', hePaymentFlow: '--', wifiPaymentFlow: '--', serviceCreated: '2024-03-01', lastUpdate: '2024-06-15' },
+  { id: 7,  name: 'True Digital Group Co.,Ltd (4239) | Health care 2 - 4239462 - True',   serviceId: '-H7RZ5MBQGMxF54q0IAp',  status: 'active',   client: 'True Digital', vsBrand: '--', type: '--',  mno: '--', carrierGradeNat: '--', shieldMode: 'Standard', headerEnrichedFlow: '--', hePaymentFlow: '--', wifiPaymentFlow: '--', serviceCreated: '2024-03-05', lastUpdate: '2024-06-18' },
+  { id: 8,  name: 'True Digital Group Co.,Ltd (4238) | XR Academy - 4238069 - True',      serviceId: '-Mp2d5AB-W5fcuufUc83',  status: 'active',   client: 'True Digital', vsBrand: '--', type: '--',  mno: '--', carrierGradeNat: '--', shieldMode: 'Standard', headerEnrichedFlow: '--', hePaymentFlow: '--', wifiPaymentFlow: '--', serviceCreated: '2024-03-10', lastUpdate: '2024-06-20' },
+  { id: 9,  name: 'True Digital Group Co.,Ltd (4239) | Horo Lucky Dee9 - 4239355 - True', serviceId: '-Muv_ZQB-W5fcuufnkmx',  status: 'active',   client: 'True Digital', vsBrand: '--', type: '--',  mno: '--', carrierGradeNat: '--', shieldMode: 'Standard', headerEnrichedFlow: '--', hePaymentFlow: '--', wifiPaymentFlow: '--', serviceCreated: '2024-03-15', lastUpdate: '2024-06-22' },
+  { id: 10, name: 'True Digital Group Co.,Ltd (4237) | Horo Sap2 - 4237422 - True',       serviceId: '-X6JlpABQGMxF54qHkFO',  status: 'active',   client: 'True Digital', vsBrand: '--', type: '--',  mno: '--', carrierGradeNat: '--', shieldMode: '--',       headerEnrichedFlow: '--', hePaymentFlow: '--', wifiPaymentFlow: '--', serviceCreated: '2024-04-01', lastUpdate: '2024-06-25' },
+  { id: 11, name: 'iPay Service',                                                          serviceId: 'qcmk0vBzyQ83DjMqcw',    status: 'inactive', client: 'TPay',          vsBrand: '--', type: 'API', mno: '--', carrierGradeNat: '--', shieldMode: 'Standout', headerEnrichedFlow: '--', hePaymentFlow: '--', wifiPaymentFlow: '--', serviceCreated: '2024-05-01', lastUpdate: '2024-07-01' },
 ];
 
-// ─── Partner action buttons (matching screenshot) ─────────────────────────────
+// ─── Partner action buttons ───────────────────────────────────────────────────
 
 const PARTNER_ACTIONS = [
-  { key: 'view',    icon: '👁',  title: 'View',         color: '#0891b2' },
-  { label: '✎',            color: '#17a2b8', title: 'Edit'            },
-  { label: 'Clone Service', color: '#0d9488', title: 'Clone Service'  },
-  // { label: '⎘',            color: '#6c757d', title: 'Duplicate'       },
+  { label: '👁',               color: '#17a2b8', title: 'View'         },
+  { label: '✎',               color: '#17a2b8', title: 'Edit'             },
+  { label: 'Clone Service',    color: '#0d9488', title: 'Clone Service'   },
   { label: 'Custom Variables', color: '#0d9488', title: 'Custom Variables' },
 ];
 
@@ -58,10 +57,6 @@ const ADMIN_ACTIONS = [
   { label: 'Custom Variables', color: '#0d9488' },
   { label: 'Update Summary',   color: '#6c757d' },
 ];
-
-function statusColor(status) {
-  return status === 'active' ? GREEN : status === 'warning' ? AMBER : ROSE;
-}
 
 // ─── Admin dropdown ───────────────────────────────────────────────────────────
 
@@ -134,28 +129,28 @@ export default function PageServices({ role = 'admin' }) {
   const displayed        = tab === 'active' ? activeServices : inactiveServices;
 
   const SUMMARY_STATS = [
-    { label: 'Total Services', value: svcRows.length,           color: '#2563eb' },
-    { label: 'Active',         value: activeServices.length,    color: '#22c55e' },
-    { label: 'Inactive',       value: inactiveServices.length,  color: '#f59e0b' },
+    { label: 'Total Services', value: svcRows.length,          color: '#2563eb' },
+    { label: 'Active',         value: activeServices.length,   color: '#22c55e' },
+    { label: 'Inactive',       value: inactiveServices.length, color: '#f59e0b' },
   ];
 
   const ALL_COLUMNS = [
-    { key: 'sr',                 label: 'Sr.',                  admin: true,  partner: true  },
-    { key: 'name',               label: 'Name',                 admin: true,  partner: true  },
-    { key: 'serviceId',          label: 'Service ID',           admin: true,  partner: true  },
-    { key: 'status',             label: 'Status',               admin: true,  partner: true  },
-    { key: 'client',             label: 'Client',               admin: true,  partner: false },
-    { key: 'vsBrand',            label: 'VS Brand',             admin: true,  partner: false },
-    { key: 'serviceType',        label: 'Service Type',         admin: true,  partner: true  },
-    { key: 'mno',                label: 'MNO',                  admin: true,  partner: false },
-    { key: 'carrierGradeNat',    label: 'Carrier Grade NAT',    admin: true,  partner: false },
-    { key: 'shieldMode',         label: 'ShieldMode',           admin: true,  partner: true  },
-    { key: 'headerEnrichedFlow', label: 'Header Enriched Flow', admin: true,  partner: true  },
-    { key: 'hePaymentFlow',      label: 'HE Payment Flow',      admin: true,  partner: false },
-    { key: 'wifiPaymentFlow',    label: 'WiFi Payment Flow',    admin: true,  partner: false },
-    { key: 'serviceCreated',     label: 'Service Created',      admin: true,  partner: false },
-    { key: 'lastUpdate',         label: 'Last Update',          admin: true,  partner: true  },
-    { key: 'actions',            label: 'Actions',              admin: true,  partner: true  },
+    { key: 'sr',                 label: 'Sr.',                  admin: true, partner: true  },
+    { key: 'name',               label: 'Name',                 admin: true, partner: true  },
+    { key: 'serviceId',          label: 'Service ID',           admin: true, partner: true  },
+    { key: 'status',             label: 'Status',               admin: true, partner: true  },
+    { key: 'client',             label: 'Client',               admin: true, partner: false },
+    { key: 'vsBrand',            label: 'VS Brand',             admin: true, partner: false },
+    { key: 'serviceType',        label: 'Service Type',         admin: true, partner: true  },
+    { key: 'mno',                label: 'MNO',                  admin: true, partner: false },
+    { key: 'carrierGradeNat',    label: 'Carrier Grade NAT',    admin: true, partner: false },
+    { key: 'shieldMode',         label: 'ShieldMode',           admin: true, partner: true  },
+    { key: 'headerEnrichedFlow', label: 'Header Enriched Flow', admin: true, partner: true  },
+    { key: 'hePaymentFlow',      label: 'HE Payment Flow',      admin: true, partner: false },
+    { key: 'wifiPaymentFlow',    label: 'WiFi Payment Flow',    admin: true, partner: false },
+    { key: 'serviceCreated',     label: 'Service Created',      admin: true, partner: false },
+    { key: 'lastUpdate',         label: 'Last Update',          admin: true, partner: true  },
+    { key: 'actions',            label: 'Actions',              admin: true, partner: true  },
   ];
 
   const visibleCols = ALL_COLUMNS.filter(c => isAdmin ? c.admin : c.partner);
@@ -179,11 +174,11 @@ export default function PageServices({ role = 'admin' }) {
             {row.status.toUpperCase()}
           </span>
         );
-      case 'client':        return <span style={{ fontSize: 12 }}>{row.client || '--'}</span>;
-      case 'vsBrand':       return <span style={{ color: '#94a3b8' }}>{row.vsBrand || '--'}</span>;
-      case 'serviceType':   return <span style={{ color: '#94a3b8' }}>{row.type || '--'}</span>;
-      case 'mno':           return <span style={{ color: '#94a3b8' }}>{row.mno || '--'}</span>;
-      case 'carrierGradeNat': return <span style={{ color: '#94a3b8' }}>{row.carrierGradeNat || '--'}</span>;
+      case 'client':           return <span style={{ fontSize: 12 }}>{row.client || '--'}</span>;
+      case 'vsBrand':          return <span style={{ color: '#94a3b8' }}>{row.vsBrand || '--'}</span>;
+      case 'serviceType':      return <span style={{ color: '#94a3b8' }}>{row.type || '--'}</span>;
+      case 'mno':              return <span style={{ color: '#94a3b8' }}>{row.mno || '--'}</span>;
+      case 'carrierGradeNat':  return <span style={{ color: '#94a3b8' }}>{row.carrierGradeNat || '--'}</span>;
       case 'shieldMode':
         return row.shieldMode && row.shieldMode !== '--'
           ? <span style={{ padding: '2px 10px', borderRadius: 4, fontSize: 11, fontWeight: 600, background: '#0dcaf0', color: '#fff' }}>{row.shieldMode}</span>
