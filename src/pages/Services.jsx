@@ -7,7 +7,6 @@ import {
 import { Card, SectionTitle, Badge } from '../components/ui';
 import { BLUE, GREEN, AMBER, ROSE, VIOLET, SLATE } from '../constants/colors';
 import { repTrend } from '../data/charts';
-import { svcRows }  from '../data/tables';
 
 const API_CALL_DATA = [
   { name: 'Shield',       calls: 10  },
@@ -21,34 +20,53 @@ const API_CALL_DATA = [
 
 const BAR_COLORS = [BLUE, GREEN, VIOLET, ROSE, AMBER, '#06b6d4', '#f97316'];
 
-const ADMIN_ACTIONS = [
-  { label: 'Solution',       color: '#6c757d' },
-  { label: 'Map Service',    color: '#17a2b8' },
-  { label: 'Dashboard',      color: '#6c757d' },
-  { label: 'Edit',           color: '#0d6efd' },
-  { label: 'IP',             color: '#6c757d' },
-  { label: 'Clone Service',  color: '#6c757d' },
-  { label: 'Update Summary', color: '#6c757d' },
+// ─── Dummy service rows matching screenshot ───────────────────────────────────
+
+const svcRows = [
+  { id: 1,  name: 'True Digital Group Co.,Ltd (4237) | Horo Sap4 - 4237424 - True', serviceId: '-36KlpABQGMxF54qLUGn', status: 'active',   client: 'True Digital', vsBrand: '--', type: '--',     mno: '--', carrierGradeNat: '--', shieldMode: '--',       headerEnrichedFlow: '--', hePaymentFlow: '--', wifiPaymentFlow: '--', serviceCreated: '2024-01-10', lastUpdate: '2024-06-01' },
+  { id: 2,  name: 'True Digital Group Co.,Ltd (4239) | Wan Duang dee 3 - 4239469 - True', serviceId: '-37bZ5MBQGMxF54qXIB_', status: 'active',   client: 'True Digital', vsBrand: '--', type: '--',     mno: '--', carrierGradeNat: '--', shieldMode: 'Standard', headerEnrichedFlow: '--', hePaymentFlow: '--', wifiPaymentFlow: '--', serviceCreated: '2024-01-12', lastUpdate: '2024-06-03' },
+  { id: 3,  name: 'True Digital Group Co.,Ltd (4238) | Hora Duange4 - 4238572 - True', serviceId: '-6gEeJcBP_A8TV-HbUzE', status: 'active',   client: 'True Digital', vsBrand: '--', type: '--',     mno: '--', carrierGradeNat: '--', shieldMode: 'Standard', headerEnrichedFlow: '--', hePaymentFlow: '--', wifiPaymentFlow: '--', serviceCreated: '2024-01-15', lastUpdate: '2024-06-05' },
+  { id: 4,  name: 'gvi services | anus-sub-acc',                                          serviceId: '-8u4q5cB1fchDeWJNjg3', status: 'active',   client: 'GVI',          vsBrand: '--', type: '--',     mno: '--', carrierGradeNat: '--', shieldMode: 'Standard', headerEnrichedFlow: '--', hePaymentFlow: '--', wifiPaymentFlow: '--', serviceCreated: '2024-02-01', lastUpdate: '2024-06-10' },
+  { id: 5,  name: 'True Digital Group Co.,Ltd (4237) | Horo Sap - 4237421 - True',       serviceId: '-H6llpABQGMxF54qjEGX', status: 'active',   client: 'True Digital', vsBrand: '--', type: '--',     mno: '--', carrierGradeNat: '--', shieldMode: '--',       headerEnrichedFlow: '--', hePaymentFlow: '--', wifiPaymentFlow: '--', serviceCreated: '2024-02-10', lastUpdate: '2024-06-12' },
+  { id: 6,  name: 'Teleinfotech | Duang Den - 4218043 - True',                            serviceId: '-H6kiZEBQGMxF54qRUQX', status: 'active',   client: 'Teleinfotech', vsBrand: '--', type: '--',     mno: '--', carrierGradeNat: '--', shieldMode: 'Standard', headerEnrichedFlow: '--', hePaymentFlow: '--', wifiPaymentFlow: '--', serviceCreated: '2024-03-01', lastUpdate: '2024-06-15' },
+  { id: 7,  name: 'True Digital Group Co.,Ltd (4239) | Health care 2 - 4239462 - True',  serviceId: '-H7RZ5MBQGMxF54q0IAp', status: 'active',   client: 'True Digital', vsBrand: '--', type: '--',     mno: '--', carrierGradeNat: '--', shieldMode: 'Standard', headerEnrichedFlow: '--', hePaymentFlow: '--', wifiPaymentFlow: '--', serviceCreated: '2024-03-05', lastUpdate: '2024-06-18' },
+  { id: 8,  name: 'True Digital Group Co.,Ltd (4238) | XR Academy - 4238069 - True',     serviceId: '-Mp2d5AB-W5fcuufUc83', status: 'active',   client: 'True Digital', vsBrand: '--', type: '--',     mno: '--', carrierGradeNat: '--', shieldMode: 'Standard', headerEnrichedFlow: '--', hePaymentFlow: '--', wifiPaymentFlow: '--', serviceCreated: '2024-03-10', lastUpdate: '2024-06-20' },
+  { id: 9,  name: 'True Digital Group Co.,Ltd (4239) | Horo Lucky Dee9 - 4239355 - True',serviceId: '-Muv_ZQB-W5fcuufnkmx', status: 'active',   client: 'True Digital', vsBrand: '--', type: '--',     mno: '--', carrierGradeNat: '--', shieldMode: 'Standard', headerEnrichedFlow: '--', hePaymentFlow: '--', wifiPaymentFlow: '--', serviceCreated: '2024-03-15', lastUpdate: '2024-06-22' },
+  { id: 10, name: 'True Digital Group Co.,Ltd (4237) | Horo Sap2 - 4237422 - True',      serviceId: '-X6JlpABQGMxF54qHkFO', status: 'active',   client: 'True Digital', vsBrand: '--', type: '--',     mno: '--', carrierGradeNat: '--', shieldMode: '--',       headerEnrichedFlow: '--', hePaymentFlow: '--', wifiPaymentFlow: '--', serviceCreated: '2024-04-01', lastUpdate: '2024-06-25' },
+  { id: 11, name: 'iPay Service',                                                         serviceId: 'qcmk0vBzyQ83DjMqcw',   status: 'inactive', client: 'TPay',          vsBrand: '--', type: 'API',    mno: '--', carrierGradeNat: '--', shieldMode: 'Standout', headerEnrichedFlow: '--', hePaymentFlow: '--', wifiPaymentFlow: '--', serviceCreated: '2024-05-01', lastUpdate: '2024-07-01' },
 ];
 
-function uptimeColor(uptime) {
-  return parseFloat(uptime) >= 99 ? GREEN : AMBER;
-}
+// ─── Partner action buttons (matching screenshot) ─────────────────────────────
 
-function latencyColor(latency) {
-  const ms = parseInt(latency);
-  return ms > 200 ? ROSE : ms > 50 ? AMBER : GREEN;
-}
+const PARTNER_ACTIONS = [
+  { label: '⚙',            color: '#17a2b8', title: 'Settings'        },
+  { label: '✎',            color: '#17a2b8', title: 'Edit'            },
+  { label: 'Clone Service', color: '#0d9488', title: 'Clone Service'  },
+  { label: '⎘',            color: '#6c757d', title: 'Duplicate'       },
+  { label: 'Custom Variables', color: '#0d9488', title: 'Custom Variables' },
+];
+
+// ─── Admin dropdown actions ───────────────────────────────────────────────────
+
+const ADMIN_ACTIONS = [
+  { label: 'Solution',         color: '#6c757d' },
+  { label: 'Map Service',      color: '#17a2b8' },
+  { label: 'Dashboard',        color: '#6c757d' },
+  { label: 'Edit',             color: '#0d6efd' },
+  { label: 'IP',               color: '#6c757d' },
+  { label: 'Clone Service',    color: '#0d9488' },
+  { label: 'Custom Variables', color: '#0d9488' },
+  { label: 'Update Summary',   color: '#6c757d' },
+];
 
 function statusColor(status) {
   return status === 'active' ? GREEN : status === 'warning' ? AMBER : ROSE;
 }
 
-// ─── Actions Dropdown (admin only) ───────────────────────────────────────────
+// ─── Admin dropdown ───────────────────────────────────────────────────────────
 
 function ActionsDropdown() {
   const [open, setOpen] = useState(false);
-
   return (
     <div style={{ position: 'relative', display: 'inline-block' }}>
       <button
@@ -59,13 +77,9 @@ function ActionsDropdown() {
           background: open ? '#f1f5f9' : '#fff',
           color: '#475569', letterSpacing: 2, lineHeight: 1,
         }}
-        title="Actions"
-      >
-        ···
-      </button>
+      >···</button>
       {open && (
         <>
-          {/* Click outside overlay */}
           <div style={{ position: 'fixed', inset: 0, zIndex: 998 }} onClick={() => setOpen(false)} />
           <div style={{
             position: 'absolute', right: 0, top: 'calc(100% + 4px)', zIndex: 999,
@@ -75,24 +89,37 @@ function ActionsDropdown() {
             overflow: 'hidden',
           }}>
             {ADMIN_ACTIONS.map((a, i) => (
-              <button
-                key={a.label}
-                onClick={() => setOpen(false)}
-                style={{
-                  display: 'block', width: '100%', textAlign: 'left',
-                  padding: '8px 14px', fontSize: 12, fontWeight: 500,
-                  border: 'none', borderTop: i > 0 ? '1px solid #f1f5f9' : 'none',
-                  cursor: 'pointer', background: 'transparent', color: a.color,
-                }}
+              <button key={a.label} onClick={() => setOpen(false)} style={{
+                display: 'block', width: '100%', textAlign: 'left',
+                padding: '8px 14px', fontSize: 12, fontWeight: 500,
+                border: 'none', borderTop: i > 0 ? '1px solid #f1f5f9' : 'none',
+                cursor: 'pointer', background: 'transparent', color: a.color,
+              }}
                 onMouseEnter={e => e.currentTarget.style.background = '#f8fafc'}
                 onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
-              >
-                {a.label}
-              </button>
+              >{a.label}</button>
             ))}
           </div>
         </>
       )}
+    </div>
+  );
+}
+
+// ─── Partner action buttons ───────────────────────────────────────────────────
+
+function PartnerActions() {
+  return (
+    <div style={{ display: 'flex', gap: 4, alignItems: 'center' }}>
+      {PARTNER_ACTIONS.map(a => (
+        <button key={a.label} title={a.title} style={{
+          padding: '2px 8px', borderRadius: 4, fontSize: 11, fontWeight: 600,
+          border: `1px solid ${a.color}`, cursor: 'pointer',
+          background: a.label.length <= 2 ? a.color : '#fff',
+          color: a.label.length <= 2 ? '#fff' : a.color,
+          whiteSpace: 'nowrap',
+        }}>{a.label}</button>
+      ))}
     </div>
   );
 }
@@ -112,7 +139,6 @@ export default function PageServices({ role = 'admin' }) {
     { label: 'Inactive',       value: inactiveServices.length,  color: '#f59e0b' },
   ];
 
-  // Columns — admin sees all, partner sees restricted set
   const ALL_COLUMNS = [
     { key: 'sr',                 label: 'Sr.',                  admin: true,  partner: true  },
     { key: 'name',               label: 'Name',                 admin: true,  partner: true  },
@@ -139,53 +165,38 @@ export default function PageServices({ role = 'admin' }) {
       case 'sr':
         return <span style={{ color: '#94a3b8' }}>{idx + 1}</span>;
       case 'name':
-        return <span style={{ fontWeight: 700, color: BLUE }}>{row.name}</span>;
+        return <span style={{ fontWeight: 600, color: '#f59e0b', fontSize: 12 }}>{row.name}</span>;
       case 'serviceId':
-        return <span style={{ fontFamily: 'monospace', fontSize: 11, color: '#64748b' }}>{row.id}</span>;
+        return <span style={{ fontFamily: 'monospace', fontSize: 11, color: '#64748b' }}>{row.serviceId}</span>;
       case 'status':
         return (
-          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
-            <span style={{ width: 8, height: 8, borderRadius: '50%', background: statusColor(row.status), display: 'inline-block' }} />
-            <span style={{ fontWeight: 600, textTransform: 'capitalize', color: statusColor(row.status) }}>{row.status}</span>
+          <span style={{
+            display: 'inline-block', padding: '2px 10px', borderRadius: 4,
+            fontSize: 11, fontWeight: 700, letterSpacing: 0.5,
+            background: row.status === 'active' ? '#16a34a' : '#f59e0b',
+            color: '#fff',
+          }}>
+            {row.status.toUpperCase()}
           </span>
         );
-      case 'client':
-        return row.client || '--';
-      case 'vsBrand':
-        return row.vsBrand || '--';
-      case 'serviceType':
-        return <Badge color={VIOLET}>{row.type}</Badge>;
-      case 'mno':
-        return row.mno || '--';
-      case 'carrierGradeNat':
-        return row.carrierGradeNat || '--';
+      case 'client':        return <span style={{ fontSize: 12 }}>{row.client || '--'}</span>;
+      case 'vsBrand':       return <span style={{ color: '#94a3b8' }}>{row.vsBrand || '--'}</span>;
+      case 'serviceType':   return <span style={{ color: '#94a3b8' }}>{row.type || '--'}</span>;
+      case 'mno':           return <span style={{ color: '#94a3b8' }}>{row.mno || '--'}</span>;
+      case 'carrierGradeNat': return <span style={{ color: '#94a3b8' }}>{row.carrierGradeNat || '--'}</span>;
       case 'shieldMode':
-        return row.shieldMode
-          ? <span style={{ padding: '2px 10px', borderRadius: 20, fontSize: 11, fontWeight: 600, background: '#0dcaf0', color: '#fff' }}>{row.shieldMode}</span>
-          : '--';
-      case 'headerEnrichedFlow':
-        return row.headerEnrichedFlow || '--';
-      case 'hePaymentFlow':
-        return row.hePaymentFlow || '--';
-      case 'wifiPaymentFlow':
-        return row.wifiPaymentFlow || '--';
+        return row.shieldMode && row.shieldMode !== '--'
+          ? <span style={{ padding: '2px 10px', borderRadius: 4, fontSize: 11, fontWeight: 600, background: '#0dcaf0', color: '#fff' }}>{row.shieldMode}</span>
+          : <span style={{ color: '#94a3b8' }}>--</span>;
+      case 'headerEnrichedFlow': return <span style={{ color: '#94a3b8' }}>{row.headerEnrichedFlow || '--'}</span>;
+      case 'hePaymentFlow':      return <span style={{ color: '#94a3b8' }}>{row.hePaymentFlow || '--'}</span>;
+      case 'wifiPaymentFlow':    return <span style={{ color: '#94a3b8' }}>{row.wifiPaymentFlow || '--'}</span>;
       case 'serviceCreated':
-        return row.serviceCreated
-          ? <span style={{ padding: '2px 8px', borderRadius: 5, fontSize: 11, background: '#e0f2fe', color: '#0369a1', fontFamily: 'monospace' }}>{row.serviceCreated}</span>
-          : '--';
+        return <span style={{ fontFamily: 'monospace', fontSize: 11, padding: '2px 6px', borderRadius: 4, background: '#e0f2fe', color: '#0369a1' }}>{row.serviceCreated}</span>;
       case 'lastUpdate':
-        return row.lastUpdate
-          ? <span style={{ padding: '2px 8px', borderRadius: 5, fontSize: 11, background: '#e0f2fe', color: '#0369a1', fontFamily: 'monospace' }}>{row.lastUpdate}</span>
-          : '--';
+        return <span style={{ fontFamily: 'monospace', fontSize: 11, padding: '2px 6px', borderRadius: 4, background: '#e0f2fe', color: '#0369a1' }}>{row.lastUpdate}</span>;
       case 'actions':
-        return isAdmin
-          ? <ActionsDropdown />
-          : (
-            <div style={{ display: 'flex', gap: 4 }}>
-              <button className="btn-secondary" style={{ fontSize: 11 }}>Dashboard</button>
-              <button className="btn-secondary" style={{ fontSize: 11 }}>Map Service</button>
-            </div>
-          );
+        return isAdmin ? <ActionsDropdown /> : <PartnerActions />;
       default:
         return '--';
     }
@@ -232,7 +243,7 @@ export default function PageServices({ role = 'admin' }) {
         </Card>
       </div>
 
-      {/* Service Registry — updated columns + dropdown */}
+      {/* Service Registry */}
       <Card>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
@@ -248,7 +259,7 @@ export default function PageServices({ role = 'admin' }) {
             )}
           </div>
 
-          {/* Active / Inactive tab bar — unchanged */}
+          {/* Active / Inactive tabs — unchanged */}
           <div style={{ display: 'flex', gap: 0 }}>
             {[['active', GREEN, '22c55e', 'dcfce7', '16a34a'], ['inactive', AMBER, 'f59e0b', 'fef3c7', 'd97706']].map(([key, borderColor, dotHex, bgHex, textHex]) => {
               const isOn = tab === key;
